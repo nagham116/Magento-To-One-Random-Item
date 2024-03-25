@@ -1,11 +1,18 @@
+
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.testng.asserts.Assertion;
 
 import dev.failsafe.internal.util.Assert;
+import net.bytebuddy.build.Plugin.Factory.UsingReflection.Priority;
 
 import java.time.Duration;
 import java.util.List;
@@ -23,7 +30,7 @@ import java.util.List;
 
 		WebDriver driver = new ChromeDriver();
 		String URL = "https://magento.softwaretestingboard.com/";
-
+		Assertion Assert = new Assertion();
 		String Password = "ASDasd123!@";
 
 		@BeforeTest
@@ -31,6 +38,7 @@ import java.util.List;
 		public void mySetup() {
 			driver.manage().window().maximize();
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(4));
+			
 		}
 		
 
@@ -68,8 +76,15 @@ import java.util.List;
 				addtoCartButton.click();
 				Thread.sleep(5000);
 				
-			}
 			 
+
+			}
+			
+			WebElement Msg =driver.findElement(By.cssSelector("div[data-bind='html: $parent.prepareMessageForHtml(message.text)']"));
+			
+			boolean actual = 	Msg.getText().contains("You added");
+			boolean expected = true ; 
+			Assert.assertEquals(actual,expected) ;
 			}
 	      @Test
 		public void CheckoutProcess() {
@@ -89,7 +104,7 @@ import java.util.List;
 
 		@Test
 		public void SignupProcess() throws InterruptedException {
-			
+			String ExpectedMsg = "Thank you for registering with Main Website Store.";
 			Thread.sleep(4000);
 			WebElement email = driver.findElement(By.id("customer-email"));
 			WebElement firstName = driver.findElement(By.name("firstname"));
@@ -125,9 +140,44 @@ import java.util.List;
 //			select.selectByValue("CN");
 //			select.selectByIndex(1);
 			select.selectByVisibleText("Jordan");
+			WebElement NextButton = driver.findElement(By.cssSelector(".button.action.continue.primary"));
+
+			NextButton.click();
+
+			Thread.sleep(5000);
+
+			WebElement placeOrder = driver.findElement(By.cssSelector(".action.primary.checkout"));
+
+			placeOrder.click();
+
+			Thread.sleep(5000);
+
+			WebElement CreateAnAccountButton = driver.findElement(
+					By.xpath("//a[@href='https://magento.softwaretestingboard.com/checkout/account/delegateCreate/']"));
+
+			CreateAnAccountButton.click();
+			Thread.sleep(5000);
+
+
+			WebElement PasswordButton = driver.findElement(By.id("password"));
+
+			WebElement ConfirmPassword = driver.findElement(By.id("password-confirmation"));
+
+			PasswordButton.sendKeys(Password);
+			ConfirmPassword.sendKeys(Password);
 			
+			WebElement CreateAnAccountFinal = driver.findElement(By.cssSelector(".action.submit.primary"));
+					CreateAnAccountFinal.click();
+					Thread.sleep(3000);
+				WebElement succesfullMsg = driver.findElement(By.cssSelector("div[data-bind='html: $parent.prepareMessageForHtml(message.text)']"));
+				
+				String ActualMsg = succesfullMsg.getText(); 
+				
+				Assert.assertEquals(ActualMsg,ExpectedMsg);
 		}
-	}
+
+		}
+	
 	    	  
 	    	  
 	    	  
